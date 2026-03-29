@@ -1,15 +1,15 @@
+import { useState } from "react";
 import BottomNav from "../BottomNav";
 import { SearchIcon } from "../Icons";
 
 export default function SearchScreen({
   getScreenClass,
-  activeFilter,
-  setActiveFilter,
-  activeFilter2,
-  setActiveFilter2,
   showToast,
   navigate,
 }) {
+  const [activeFilter, setActiveFilter] = useState('전체');
+  const [activeFilter2, setActiveFilter2] = useState('#연장');
+
   return (
     <div className={getScreenClass("s-search")} id="s-search">
       <div className="topbar">

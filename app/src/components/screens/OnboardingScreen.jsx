@@ -1,12 +1,13 @@
+import { useState } from "react";
+
 export default function OnboardingScreen({
   getScreenClass,
   showToast,
   navigate,
-  visaChip,
-  setVisaChip,
-  langs,
-  setLangs,
 }) {
+  const [langs, setLangs] = useState({ ko: true, zh: true, en: false, vi: false });
+  const [visaChip, setVisaChip] = useState('D-2 학생');
+
   return (
     <div className={getScreenClass("s-onboarding")} id="s-onboarding">
       <div

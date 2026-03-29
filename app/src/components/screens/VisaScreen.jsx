@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BackIcon, SendIcon } from '../Icons';
 
-const VisaScreen = ({ navigate, back, getScreenClass, showToast, infoOpen, setInfoOpen }) => {
+const VisaScreen = ({ navigate, back, getScreenClass, showToast }) => {
+  const [infoOpen, setInfoOpen] = useState(true);
+
   return (
     <div className={getScreenClass('s-visa')} id="s-visa">
       <div className="slim-header">

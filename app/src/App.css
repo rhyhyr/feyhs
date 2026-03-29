@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
   *, *::before, *::after {
     box-sizing: border-box;
@@ -35,29 +36,29 @@
     --topbar-h: 52px;
   }
 
-  html, body, #root {
+  html, body {
     width: 100%;
     min-height: 100vh;
-    margin: 0;
-    background: #ffffff;
+    background: #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'Noto Sans KR', system-ui, sans-serif;
-    overflow-x: hidden;
-  }
-
-  body {
-    display: block;
+    overflow: auto;
   }
 
   .iphone {
     position: relative;
-    width: 100%;
-    max-width: 475px;
-    height: 100vh;
-    min-height: 100vh;
-    margin: 0 auto;
+    width: var(--w);
+    height: var(--h);
     background: var(--c-surface);
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: var(--radius-phone);
+    box-shadow:
+      0 0 0 11px #1C1C1E,
+      0 0 0 13px #3A3A3C,
+      0 0 0 14px #1C1C1E,
+      0 40px 80px rgba(0,0,0,.7),
+      inset 0 0 0 1px rgba(255,255,255,.08);
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
   }
@@ -103,7 +104,7 @@
     justify-content: space-between;
     padding-bottom: 10px;
     z-index: 100;
-    background: #fff;
+    background: var(--c-surface);
     font-size: 15px;
     font-weight: 600;
     color: var(--c-t1);
@@ -145,9 +146,9 @@
   .screens {
     position: absolute;
     top: var(--safe-top);
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
     overflow: hidden;
   }
 
@@ -180,7 +181,6 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px 10px;
-    padding-top: 6px;
     background: var(--c-surface);
     border-bottom: 1px solid var(--c-border);
     flex-shrink: 0;
@@ -1074,6 +1074,7 @@
     text-align: center;
     width: calc(100% - 32px);
     transition: opacity .1s, transform .1s;
+    display: block;
   }
 
   .cta-primary:active { opacity: .85; transform: scale(.98); }
@@ -1121,6 +1122,7 @@
     padding: 10px 13px;
   }
 
+  .search-bar svg { flex-shrink: 0; }
   .search-bar span { font-size: 14px; color: var(--c-t3); }
 
   .filter-row {
@@ -1405,3 +1407,62 @@
   }
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── Calendar cells ── */
+  .cal-cell {
+    min-height: 64px;
+    border: 1px solid var(--c-border);
+    border-radius: 14px;
+    background: var(--c-surface);
+    padding: 8px 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+
+  .cal-cell:active { transform: scale(.97); }
+
+  .cal-cell.other-month {
+    background: #FAFAF8;
+    color: var(--c-t3);
+  }
+
+  .cal-cell.today {
+    border-color: var(--c-accent-m);
+    background: var(--c-accent-l);
+  }
+
+  .cal-cell.selected {
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 2px rgba(33,85,205,.08);
+  }
+
+  .cal-date {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--c-t1);
+  }
+
+  .cal-cell.other-month .cal-date { color: var(--c-t3); }
+
+  .cal-cell.today .cal-date {
+    color: var(--c-accent);
+    font-weight: 700;
+  }
+
+  .cal-dots {
+    display: flex;
+    gap: 3px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 10px;
+  }
+
+  .cal-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }

@@ -1,12 +1,13 @@
+import { useState } from "react";
 import BottomNav from "../BottomNav";
 
 export default function ProfileScreen({
   getScreenClass,
-  toggles,
-  setToggles,
   showToast,
   navigate,
 }) {
+  const [toggles, setToggles] = useState({ visa: true, house: true, insurance: false });
+
   return (
     <div className={getScreenClass("s-profile")} id="s-profile">
       <div className="topbar">

@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BackIcon } from '../Icons';
 
-const StepGuideScreen = ({ back, getScreenClass, toggleStep, steps, checkedCount, total, pct, grp1Checked, grp2Checked, showToast }) => {
+const StepGuideScreen = ({ back, getScreenClass, showToast }) => {
+  // 단계 체크 상태 (원본 HTML과 동일: 1,2번 checked, 3번 current)
+  const [steps, setSteps] = useState([
+    { id: 1, text: '여권 원본 + 사본 1부', sub: '유효기간 6개월 이상', checked: true, current: false },
+    { id: 2, text: '외국인등록증 원본', sub: '', checked: true, current: false },
+    { id: 3, text: '재학증명서 (영문) 발급', sub: '포털 → 증명서 발급 → 영문 재학증명서', checked: false, current: true },
+    { id: 4, text: '수수료 60,000원 준비', sub: '', checked: false, current: false },
+    { id: 5, text: '출입국관리사무소 방문 예약', sub: 'Hi Korea에서 사전 예약 필수', checked: false, current: false },
+    { id: 6, text: '방문 접수 및 수령', sub: '처리 기간 약 5~7 영업일', checked: false, current: false },
+  ]);
+
+  const checkedCount = steps.filter(s => s.checked).length;
+  const total = steps.length;
+  const pct = Math.round(checkedCount / total * 100);
+  const grp1Checked = steps.slice(0, 4).filter(s => s.checked).length;
+  const grp2Checked = steps.slice(4).filter(s => s.checked).length;
+
+  // 원본 JS toggleStep과 동일 로직
+  function toggleStep(id) {
+    setSteps(prev => {
+      const updated = prev.map(s => {
+        if (s.id === id) {
+          const nowChecked = !s.checked;
+          return { ...s, checked: nowChecked, current: !nowChecked };
+        }
+        return s;
+      });
+      if (updated.filter(s => s.checked).length === total) {
+        showToast('🎉 모든 단계를 완료했습니다!');
+      }
+      return updated;
+    });
+  }
+
   return (
     <div className={getScreenClass('s-step')} id="s-step">
       <div className="topbar">

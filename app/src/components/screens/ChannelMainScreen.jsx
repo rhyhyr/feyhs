@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BackIcon, SearchIcon } from "../Icons";
 
 export default function ChannelMainScreen({
@@ -5,9 +6,9 @@ export default function ChannelMainScreen({
   back,
   showToast,
   navigate,
-  channelFilter,
-  setChannelFilter,
 }) {
+  const [channelFilter, setChannelFilter] = useState('전체');
+
   return (
     <div className={getScreenClass("s-channel-main")} id="s-channel-main">
       <div className="slim-header">
