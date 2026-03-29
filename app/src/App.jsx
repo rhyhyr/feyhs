@@ -1483,6 +1483,8 @@ import { BackIcon, SendIcon, SearchIcon } from "./components/Icons";
 import BottomNav from "./components/BottomNav";
 
 import CalendarScreen from "./components/screens/CalendarScreen";
+import StepGuideScreen from "./components/screens/StepGuideScreen";
+import ProfileScreen from "./components/screens/ProfileScreen";
 
 /* ══════════════════════════════
    메인 앱 컴포넌트
