@@ -1485,6 +1485,10 @@ import BottomNav from "./components/BottomNav";
 import CalendarScreen from "./components/screens/CalendarScreen";
 import StepGuideScreen from "./components/screens/StepGuideScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
+import SearchScreen from "./components/screens/SearchScreen";
+import OnboardingScreen from "./components/screens/OnboardingScreen";
+import KnowledgeDetailScreen from "./components/screens/KnowledgeDetailScreen";
+import ChannelMainScreen from "./components/screens/ChannelMainScreen";
 
 /* ══════════════════════════════
    메인 앱 컴포넌트
@@ -1722,313 +1726,50 @@ export default function YHSApp() {
         {/* ⑤ CALENDAR */}
         <CalendarScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
 
-        {/* ⑥ CHANNEL MAIN (지식 카드) */}
-        <div className={getScreenClass('s-channel-main')} id="s-channel-main">
-          <div className="slim-header">
-            <div className="tb-back" onClick={back}><BackIcon /></div>
-            <div className="slim-ch-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-            <div className="slim-ch-name">비자 & 체류</div>
-            <div className="slim-rag">RAG 활성</div>
-          </div>
-          <div className="ch-tabs">
-            <div className="ch-tab" onClick={() => navigate('s-visa')}>💬 채팅</div>
-            <div className="ch-tab active">📚 지식 카드</div>
-          </div>
-          <div className="search-bar">
-            <SearchIcon />
-            <span>채널 내 대화 검색...</span>
-          </div>
-          <div className="filter-row">
-            {['전체','#연장','#D-2','#서류','#출입국'].map(f => (
-              <button key={f} className={`filter-chip${channelFilter === f ? ' active' : ''}`} onClick={() => { setChannelFilter(f); showToast(f + ' 필터가 적용됐습니다'); }}>{f}</button>
-            ))}
-          </div>
-          <div className="scroll-area" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '4px 0 12px' }}>
-            <div className="k-card" onClick={() => navigate('s-knowledge')}>
-              <div className="k-card-body">
-                <div className="k-q">비자 연장하려면 뭐가 필요해요?</div>
-                <div className="k-preview">D-2 비자 연장 서류입니다. ① 여권 원본 ② 외국인등록증 ③ 재학증명서 (영문)...</div>
-              </div>
-              <div className="k-card-foot">
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#D-2</span>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#연장</span>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#서류</span>
-                </div>
-                <span style={{ fontSize: '11px', color: 'var(--c-t3)' }}>3일 전</span>
-              </div>
-            </div>
-            <div className="k-card" onClick={() => navigate('s-knowledge')}>
-              <div className="k-card-body">
-                <div className="k-q">비자 연장 신청 기간이 언제예요?</div>
-                <div className="k-preview">만료일 4개월 전부터 신청 가능합니다. 늦어도 만료 1개월 전에는...</div>
-              </div>
-              <div className="k-card-foot">
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#연장</span>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#기간</span>
-                </div>
-                <span style={{ fontSize: '11px', color: 'var(--c-t3)' }}>1주 전</span>
-              </div>
-            </div>
-            <div className="k-card" onClick={() => navigate('s-knowledge')}>
-              <div className="k-card-body">
-                <div className="k-q">Hi Korea에서 온라인 신청이 가능한가요?</div>
-                <div className="k-preview">네, Hi Korea(www.hikorea.go.kr)에서 온라인으로 비자 연장 신청이 가능합니다...</div>
-              </div>
-              <div className="k-card-foot">
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#출입국</span>
-                </div>
-                <span style={{ fontSize: '11px', color: 'var(--c-t3)' }}>2주 전</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ChannelMainScreen
+          getScreenClass={getScreenClass}
+          back={back}
+          showToast={showToast}
+          navigate={navigate}
+          channelFilter={channelFilter}
+          setChannelFilter={setChannelFilter}
+        />
 
-        {/* ⑦ KNOWLEDGE DETAIL */}
-        <div className={getScreenClass('s-knowledge')} id="s-knowledge">
-          <div className="topbar">
-            <div className="tb-back" onClick={back}><BackIcon /></div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-              <div style={{ width: '24px', height: '24px', borderRadius: '7px', background: 'var(--c-purple-l)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px' }}>🛂</div>
-              <span style={{ fontSize: '13px', color: 'var(--c-t2)' }}>비자 & 체류 채널</span>
-            </div>
-          </div>
-          <div className="scroll-area">
-            <div className="kd-q-box">
-              <div className="kd-q-label">Q. 원본 질문</div>
-              <div className="kd-q-text">비자 연장하려면 뭐가 필요해요?</div>
-            </div>
-            <div style={{ padding: '8px 14px 6px', display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-              <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#D-2</span>
-              <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#연장</span>
-              <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#서류</span>
-              <span style={{ fontSize: '11px', color: 'var(--c-t3)', display: 'flex', alignItems: 'center', marginLeft: '4px' }}>3일 전</span>
-            </div>
-            <div className="kd-block-text">D-2 비자 연장에 필요한 서류입니다. 출입국관리사무소 방문 신청 또는 Hi Korea 온라인 신청 모두 가능합니다.</div>
-            <div className="kd-list-block">
-              <div className="kd-list-title">📋 필요 서류</div>
-              {[
-                '여권 원본 + 사본 1부 (유효기간 6개월 이상)',
-                '외국인등록증 원본',
-                '재학증명서 (영문)',
-                '수수료 60,000원',
-              ].map((item, i) => (
-                <div key={i} className="kd-list-item">
-                  <div className="kd-num">{i + 1}</div>{item}
-                </div>
-              ))}
-            </div>
-            <div className="kd-source">📎 출처: 법무부 출입국관리법 시행규칙 (2024) · Hi Korea 외국인 안내</div>
-            <div className="kd-section-lbl">⚡ Action Guide</div>
-            <div className="cta-card" onClick={() => navigate('s-step')} style={{ margin: '0 14px 14px' }}>
-              <div className="cta-icon">📋</div>
-              <div className="cta-body">
-                <div className="cta-title">비자 연장 절차 보기</div>
-                <div className="cta-sub">6단계 체크리스트 · 진행 현황 추적</div>
-              </div>
-              <div className="cta-arrow">›</div>
-            </div>
-            <div className="kd-section-lbl">🔗 관련 질문</div>
-            <div className="related-q" onClick={() => showToast('관련 질문을 불러옵니다')}>
-              비자 연장 신청 기간이 언제예요?
-              <span style={{ color: 'var(--c-t3)', fontSize: '18px' }}>›</span>
-            </div>
-            <div className="related-q" onClick={() => showToast('관련 질문을 불러옵니다')}>
-              Hi Korea 온라인 신청이 가능한가요?
-              <span style={{ color: 'var(--c-t3)', fontSize: '18px' }}>›</span>
-            </div>
-            <div style={{ height: '16px' }} />
-          </div>
-        </div>
+        <KnowledgeDetailScreen
+          getScreenClass={getScreenClass}
+          back={back}
+          showToast={showToast}
+          navigate={navigate}
+        />
 
-        {/* ⑧ ONBOARDING */}
-        <div className={getScreenClass('s-onboarding')} id="s-onboarding">
-          <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-            <div className="ob-hero">
-              <span className="ob-mark">🎓</span>
-              <div className="ob-h">YHS AI</div>
-              <div className="ob-p">한국 유학 생활, 더 쉽게<br />비자·학교·생활 모두 안내해드려요</div>
-            </div>
-            <button className="social-btn" onClick={() => showToast('Google 로그인 화면으로 이동합니다')}>
-              <span style={{ fontSize: '18px' }}>🌐</span> Google로 시작하기
-            </button>
-            <div style={{ padding: '0 16px 12px', textAlign: 'center', fontSize: '12px', color: 'var(--c-t3)' }}>카카오 로그인은 추후 지원 예정입니다</div>
-            <div style={{ height: '1px', background: 'var(--c-border)', margin: '0 0 16px' }} />
-            <div className="ob-steps">
-              <div className="ob-step-dot done" />
-              <div className="ob-step-dot active" />
-              <div className="ob-step-dot" />
-            </div>
-            <div className="form-sec">기본 정보 입력</div>
-            <div className="form-note">국적·학교·비자 유형만 입력하면 바로 시작할 수 있어요</div>
-            <div className="form-group" style={{ marginTop: '8px' }}>
-              <div className="f-label">국적</div>
-              <div className="f-input filled">🇨🇳 중국 <span style={{ color: 'var(--c-t3)' }}>▾</span></div>
-            </div>
-            <div className="form-group">
-              <div className="f-label">학교</div>
-              <div className="f-input filled">부산대학교</div>
-            </div>
-            <div className="form-group">
-              <div className="f-label">비자 유형</div>
-              <div className="chip-row">
-                {['D-2 학생', 'D-4 어학연수', 'F-2 거주', '기타'].map(v => (
-                  <button key={v} className={`sel-chip${visaChip === v ? ' on' : ''}`} onClick={() => setVisaChip(v)}>{v}</button>
-                ))}
-              </div>
-            </div>
-            <div className="ob-note">📅 비자 만료일은 비자 채널에서 대화할 때 입력할 수 있어요</div>
-            <div className="form-sec">사용 언어</div>
-            <div className="lang-grid">
-              {[['ko','🇰🇷','한국어','Korean'],['zh','🇨🇳','중국어','Chinese'],['en','🇺🇸','영어','English'],['vi','🇻🇳','베트남어','Vietnamese']].map(([key,flag,name,sub]) => (
-                <div key={key} className={`lang-card${langs[key] ? ' on' : ''}`} onClick={() => setLangs(l => ({ ...l, [key]: !l[key] }))}>
-                  <div className="lang-flag">{flag}</div>
-                  <div className="lang-name">{name}</div>
-                  <div className="lang-sub">{sub}</div>
-                </div>
-              ))}
-            </div>
-            <button className="cta-primary" onClick={() => navigate('s-home')}>시작하기 →</button>
-            <div className="footnote">국적·학교·비자 유형만으로 맞춤 채널이 자동 생성됩니다</div>
-          </div>
-        </div>
+        <OnboardingScreen
+          getScreenClass={getScreenClass}
+          showToast={showToast}
+          navigate={navigate}
+          visaChip={visaChip}
+          setVisaChip={setVisaChip}
+          langs={langs}
+          setLangs={setLangs}
+        />
 
-        {/* ⑨ SEARCH */}
-        <div className={getScreenClass('s-search')} id="s-search">
-          <div className="topbar">
-            <div className="tb-title" style={{ flex: 1 }}>검색</div>
-            <div className="tb-sub" style={{ fontSize: '11px', color: 'var(--c-t3)' }}>과거 대화 전체 탐색</div>
-          </div>
-          <div className="search-bar" style={{ marginTop: '6px' }}>
-            <SearchIcon />
-            <span>비자 연장</span>
-          </div>
-          <div className="filter-row">
-            {['전체','🛂 비자','🏫 학교','💼 취업','🏠 주거'].map(f => (
-              <button key={f} className={`filter-chip${activeFilter === f ? ' active' : ''}`} onClick={() => { setActiveFilter(f); showToast(f + ' 필터가 적용됐습니다'); }}>{f}</button>
-            ))}
-          </div>
-          <div className="filter-row" style={{ paddingTop: 0 }}>
-            {['#연장','#D-2','#서류','#출입국'].map(f => (
-              <button key={f} className={`filter-chip${activeFilter2 === f ? ' active' : ''}`} style={{ fontSize: '11px' }} onClick={() => { setActiveFilter2(f); showToast(f + ' 필터가 적용됐습니다'); }}>{f}</button>
-            ))}
-          </div>
-          <div style={{ padding: '4px 14px 8px', fontSize: '12px', fontWeight: 600, color: 'var(--c-t3)', letterSpacing: '.5px' }}>검색 결과 2건</div>
-          <div className="scroll-area" style={{ paddingBottom: '12px' }}>
-            <div className="result-card" onClick={() => navigate('s-knowledge')}>
-              <div className="result-inner">
-                <div className="result-ch-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-                <div className="result-body">
-                  <div className="result-q">비자 연장하려면 뭐가 필요해요?</div>
-                  <div className="result-p">D-2 비자 연장 서류입니다. ① 여권 원본 ② 외국인등록증...</div>
-                  <div className="result-foot">
-                    <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#D-2</span>
-                    <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#연장</span>
-                    <span className="r-time">3일 전</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="result-card" onClick={() => navigate('s-knowledge')}>
-              <div className="result-inner">
-                <div className="result-ch-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-                <div className="result-body">
-                  <div className="result-q">비자 연장 신청 기간이 언제예요?</div>
-                  <div className="result-p">만료일 4개월 전부터 신청 가능합니다. 늦어도 1개월 전에...</div>
-                  <div className="result-foot">
-                    <span className="tag" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>#연장</span>
-                    <span className="r-time">1주 전</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <BottomNav active="s-search" navigate={navigate} />
-        </div>
+        <ProfileScreen
+          getScreenClass={getScreenClass}
+          toggles={toggles}
+          setToggles={setToggles}
+          showToast={showToast}
+          navigate={navigate}
+        />
 
-        {/* ⑩ PROFILE */}
-        <div className={getScreenClass('s-profile')} id="s-profile">
-          <div className="topbar">
-            <div className="tb-title">내 정보</div>
-          </div>
-          <div className="scroll-area">
-            <div className="profile-hero">
-              <div className="p-av">W</div>
-              <div className="p-name">Wei Zhang</div>
-              <div className="p-school">부산대학교 · 컴퓨터공학과 3학년</div>
-              <div className="p-badges">
-                <span className="p-badge" style={{ background: 'var(--c-purple-l)', color: 'var(--c-purple)' }}>🛂 D-2 비자</span>
-                <span className="p-badge" style={{ background: 'var(--c-accent-l)', color: 'var(--c-accent)' }}>🇨🇳 중국</span>
-                <span className="p-badge" style={{ background: 'var(--c-red-l)', color: 'var(--c-red)' }}>D-87</span>
-              </div>
-            </div>
-            <div className="visa-card">
-              <div className="vc-hdr">🛂 비자 정보</div>
-              <div className="vc-row">
-                <div className="vc-label">비자 유형</div>
-                <div className="vc-val">D-2 (학생)</div>
-              </div>
-              <div className="vc-row">
-                <div className="vc-label">만료일</div>
-                <div className="vc-val" style={{ color: 'var(--c-red)' }}>2026. 8. 15 (D-87)</div>
-              </div>
-              <div className="vc-btn" onClick={() => showToast('비자 정보 수정 화면으로 이동합니다')}>비자 정보 수정</div>
-            </div>
-            <div className="setting-sec">알림 설정</div>
-            <div className="setting-row">
-              <div className="s-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-              <div className="s-body">
-                <div className="s-name">비자 & 체류 알림</div>
-                <div className="s-val">만료 90일·30일·7일 전</div>
-              </div>
-              <div className={`toggle-track ${toggles.visa ? 'on' : 'off'}`} onClick={() => { setToggles(t => ({ ...t, visa: !t.visa })); showToast(toggles.visa ? '알림이 꺼졌습니다' : '알림이 켜졌습니다'); }}>
-                <div className="toggle-knob" />
-              </div>
-            </div>
-            <div className="setting-row">
-              <div className="s-icon" style={{ background: 'var(--c-amber-l)' }}>🏠</div>
-              <div className="s-body">
-                <div className="s-name">주거 계약 알림</div>
-                <div className="s-val">만료 60일 전</div>
-              </div>
-              <div className={`toggle-track ${toggles.house ? 'on' : 'off'}`} onClick={() => { setToggles(t => ({ ...t, house: !t.house })); showToast(toggles.house ? '알림이 꺼졌습니다' : '알림이 켜졌습니다'); }}>
-                <div className="toggle-knob" />
-              </div>
-            </div>
-            <div className="setting-row">
-              <div className="s-icon" style={{ background: 'var(--c-green-l)' }}>🏥</div>
-              <div className="s-body">
-                <div className="s-name">보험료 납부 알림</div>
-                <div className="s-val">납부일 5일 전</div>
-              </div>
-              <div className={`toggle-track ${toggles.insurance ? 'on' : 'off'}`} onClick={() => { setToggles(t => ({ ...t, insurance: !t.insurance })); showToast(toggles.insurance ? '알림이 꺼졌습니다' : '알림이 켜졌습니다'); }}>
-                <div className="toggle-knob" />
-              </div>
-            </div>
-            <div className="setting-sec">앱 설정</div>
-            <div className="setting-row" onClick={() => showToast('언어 설정 화면으로 이동합니다')}>
-              <div className="s-icon" style={{ background: 'var(--c-accent-l)' }}>🌐</div>
-              <div className="s-body">
-                <div className="s-name">사용 언어</div>
-                <div className="s-val">한국어 · 中文</div>
-              </div>
-              <div style={{ fontSize: '18px', color: 'var(--c-t3)' }}>›</div>
-            </div>
-            <div className="setting-row" onClick={() => showToast('개인정보 수정 화면으로 이동합니다')}>
-              <div className="s-icon" style={{ background: 'var(--c-bg)' }}>👤</div>
-              <div className="s-body">
-                <div className="s-name">개인정보 수정</div>
-                <div className="s-val">이름, 학교, 학과</div>
-              </div>
-              <div style={{ fontSize: '18px', color: 'var(--c-t3)' }}>›</div>
-            </div>
-            <div className="logout-btn" onClick={() => navigate('s-onboarding')}>로그아웃</div>
-            <div style={{ height: '20px' }} />
-          </div>
-          <BottomNav active="s-profile" navigate={navigate} />
-        </div>
+        <SearchScreen
+          getScreenClass={getScreenClass}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          activeFilter2={activeFilter2}
+          setActiveFilter2={setActiveFilter2}
+          showToast={showToast}
+          navigate={navigate}
+        />
+
 
       </div>{/* /screens */}
 
