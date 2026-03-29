@@ -30,122 +30,105 @@ export default function YHSApp() {
   const [current, setCurrent] = useState('s-home');
   const [prev, setPrev] = useState(null);
   const [historyStack, setHistoryStack] = useState(['s-home']);
-    const [toastMsg, setToastMsg] = useState('');
-    const [toastVisible, setToastVisible] = useState(false);
-    const toastTimer = useRef(null);
-  
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+  const toastTimer = useRef(null);
 
-  
-    // 언어 카드
-    const [langs, setLangs] = useState({ ko: true, zh: true, en: false, vi: false });
-  
-    // 비자 칩
-    const [visaChip, setVisaChip] = useState('D-2 학생');
-  
-    // 인포 패널 (비자 채널) — 원본 JS: infoOpen = true 로 시작
-    const [infoOpen, setInfoOpen] = useState(true);
-  
-    // 검색 필터 (원본 HTML: 전체 active + #연장 active)
-    const [activeFilter, setActiveFilter] = useState('전체');
-    const [activeFilter2, setActiveFilter2] = useState('#연장');
-  
-    // 채널 메인 필터
-    const [channelFilter, setChannelFilter] = useState('전체');
-  
-    function navigate(id) {
-      if (id === 'notif-placeholder') { showToast('알림 화면으로 이동합니다'); return; }
-      if (id === current) return;
-      setPrev(current);
-      setCurrent(id);
-      setHistoryStack(h => [...h, id]);
-    }
-  
-    function back() {
-      if (historyStack.length <= 1) return;
-      const newStack = [...historyStack];
-      newStack.pop();
-      const nextScreen = newStack[newStack.length - 1];
-      setPrev(current);
-      setCurrent(nextScreen);
-      setHistoryStack(newStack);
-    }
-  
-    function showToast(msg) {
-      setToastMsg(msg);
-      setToastVisible(true);
-      clearTimeout(toastTimer.current);
-      toastTimer.current = setTimeout(() => setToastVisible(false), 2200);
-    }
-  
-    function getScreenClass(id) {
-      if (id === current) return 'screen active';
-      if (id === prev) return 'screen exit-left';
-      return 'screen';
-    }
-  
-    return (
-      <div className="iphone">
-        {/* Dynamic Island */}
-        <div className="dynamic-island">
-          <div className="di-sensor" />
-          <div className="di-camera" />
-        </div>
-  
-        {/* Status Bar */}
-        <div className="status-bar">
-          <span>9:41</span>
-          <div className="sb-right">
-            <div className="sb-signal">
-              <div className="sb-bar" style={{ height: '4px' }} />
-              <div className="sb-bar" style={{ height: '6px' }} />
-              <div className="sb-bar" style={{ height: '9px' }} />
-              <div className="sb-bar" style={{ height: '12px' }} />
-            </div>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-              <rect x="0" y="3" width="13" height="9" rx="2" stroke="#1A1916" strokeWidth="1.5" />
-              <rect x="1.5" y="4.5" width="8" height="6" rx="1" fill="#1A1916" />
-              <path d="M14 5v4a2 2 0 000-4z" fill="#1A1916" opacity=".4" />
-            </svg>
-            <span style={{ fontSize: '13px' }}>95%</span>
+  function navigate(id) {
+    if (id === 'notif-placeholder') { showToast('알림 화면으로 이동합니다'); return; }
+    if (id === current) return;
+    setPrev(current);
+    setCurrent(id);
+    setHistoryStack(h => [...h, id]);
+  }
+
+  function back() {
+    if (historyStack.length <= 1) return;
+    const newStack = [...historyStack];
+    newStack.pop();
+    const nextScreen = newStack[newStack.length - 1];
+    setPrev(current);
+    setCurrent(nextScreen);
+    setHistoryStack(newStack);
+  }
+
+  function showToast(msg) {
+    setToastMsg(msg);
+    setToastVisible(true);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastVisible(false), 2200);
+  }
+
+  function getScreenClass(id) {
+    if (id === current) return 'screen active';
+    if (id === prev) return 'screen exit-left';
+    return 'screen';
+  }
+
+  return (
+    <div className="iphone">
+      {/* Dynamic Island */}
+      <div className="dynamic-island">
+        <div className="di-sensor" />
+        <div className="di-camera" />
+      </div>
+
+      {/* Status Bar */}
+      <div className="status-bar">
+        <span>9:41</span>
+        <div className="sb-right">
+          <div className="sb-signal">
+            <div className="sb-bar" style={{ height: '4px' }} />
+            <div className="sb-bar" style={{ height: '6px' }} />
+            <div className="sb-bar" style={{ height: '9px' }} />
+            <div className="sb-bar" style={{ height: '12px' }} />
           </div>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <rect x="0" y="3" width="13" height="9" rx="2" stroke="#1A1916" strokeWidth="1.5" />
+            <rect x="1.5" y="4.5" width="8" height="6" rx="1" fill="#1A1916" />
+            <path d="M14 5v4a2 2 0 000-4z" fill="#1A1916" opacity=".4" />
+          </svg>
+          <span style={{ fontSize: '13px' }}>95%</span>
         </div>
-  
-        {/* Home Indicator */}
-        <div className="home-indicator" />
-  
-        {/* ══════ SCREENS ══════ */}
-        <div className="screens">
-  
-          <HomeScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
-  
-                  <VisaScreen
-                    navigate={navigate}
-                    back={back}
-                    getScreenClass={getScreenClass}
-                    showToast={showToast}
-                  />  
-          <StepGuideScreen
-            back={back}
-            getScreenClass={getScreenClass}
-            showToast={showToast}
-          />
-  
-          <MainChatScreen
-            getScreenClass={getScreenClass}
-            back={back}
-            navigate={navigate}
-            showToast={showToast}
-          />
-  
-          {/* ⑤ CALENDAR */}
-          <CalendarScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
-  
-                  <ChannelMainScreen
-                    getScreenClass={getScreenClass}
-                    back={back}
-                    showToast={showToast}
-                    navigate={navigate}
-                  />  
+      </div>
+
+      {/* Home Indicator */}
+      <div className="home-indicator" />
+
+      {/* ══════ SCREENS ══════ */}
+      <div className="screens">
+
+        <HomeScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
+
+        <VisaScreen
+          navigate={navigate}
+          back={back}
+          getScreenClass={getScreenClass}
+          showToast={showToast}
+        />
+
+        <StepGuideScreen
+          back={back}
+          getScreenClass={getScreenClass}
+          showToast={showToast}
+        />
+
+        <MainChatScreen
+          getScreenClass={getScreenClass}
+          back={back}
+          navigate={navigate}
+          showToast={showToast}
+        />
+
+        {/* ⑤ CALENDAR */}
+        <CalendarScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
+
+        <ChannelMainScreen
+          getScreenClass={getScreenClass}
+          back={back}
+          showToast={showToast}
+          navigate={navigate}
+        />
 
         <KnowledgeDetailScreen
           getScreenClass={getScreenClass}
@@ -171,7 +154,6 @@ export default function YHSApp() {
           showToast={showToast}
           navigate={navigate}
         />
-
 
       </div>{/* /screens */}
 
