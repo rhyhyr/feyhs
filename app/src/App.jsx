@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* ══════════════════════════════════════════════════════
-   UniGuide AI — React Prototype
    원본 HTML(iphone15.html) 과 완전히 동일하게 구현
 ══════════════════════════════════════════════════════ */
 
@@ -1475,205 +1474,20 @@ const globalStyles = `
   }
 `;
 
-/* ── 캘린더 이벤트 데이터 (원본 JS와 동일) ── */
-const calendarEvents = {
-  '2026-08-10': [{ title: '비자 연장 서류 준비', color: '#5B45C2', type: '비자', desc: '만료 35일 전 — 서류 준비 권장' }],
-  '2026-08-15': [{ title: 'D-2 비자 만료일', color: '#D13B3B', type: '비자', desc: '이 날 이전에 연장 완료 필수' }],
-  '2026-08-20': [{ title: '건강보험료 납부', color: '#1A8C5B', type: '보험', desc: '8월분 납부 마감' }],
-  '2026-08-25': [{ title: '수강신청 정정기간', color: '#2155CD', type: '학교', desc: '학교 포털에서 정정 가능' }],
-};
 
-function formatDateKey(year, month, day) {
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
 
-/* ── SVG 아이콘 ── */
-const BackIcon = () => (
-  <svg viewBox="0 0 8 14" fill="none">
-    <path d="M7 1L1 7l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+import VisaScreen from "./components/screens/VisaScreen";
+import HomeScreen from "./components/screens/HomeScreen";
+import { BackIcon, SendIcon, SearchIcon } from "./components/Icons";
 
-const SendIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <path d="M2 8h12M9 3l5 5-5 5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+import BottomNav from "./components/BottomNav";
 
-const SearchIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5" stroke="var(--c-t3)" strokeWidth="1.5" />
-    <path d="M11 11l3 3" stroke="var(--c-t3)" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
-
-/* ── 하단 네비게이션 ── */
-const BottomNav = ({ active, navigate }) => {
-  const items = [
-    { id: 's-home', icon: '⊞', label: '홈' },
-    { id: 's-main', icon: '💬', label: '채팅' },
-    { id: 's-calendar', icon: '📅', label: '캘린더' },
-    { id: 's-search', icon: '🔍', label: '검색' },
-    { id: 's-profile', icon: '👤', label: '내정보' },
-  ];
-  return (
-    <div className="bottom-nav">
-      {items.map(item => (
-        <div
-          key={item.id}
-          className={`bnav-item${active === item.id ? ' active' : ''}`}
-          onClick={() => navigate(item.id)}
-        >
-          <div className="bnav-icon">{item.icon}</div>
-          <span>{item.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-/* ── 캘린더 컴포넌트 (원본 JS renderCalendar와 동일) ── */
-const CalendarScreen = ({ navigate, getScreenClass, showToast }) => {
-  const [calDate, setCalDate] = useState(new Date(2026, 7, 1));
-  const [selectedDateKey, setSelectedDateKey] = useState(null);
-
-  const year = calDate.getFullYear();
-  const month = calDate.getMonth();
-
-  const firstDay = new Date(year, month, 1);
-  const startWeekday = firstDay.getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const prevMonthDays = new Date(year, month, 0).getDate();
-  const today = new Date();
-
-  // 초기 선택 날짜: 이벤트 있는 첫 날짜 또는 1일
-  const resolvedSelected = selectedDateKey || (() => {
-    const first = Object.keys(calendarEvents).find(key => {
-      const d = new Date(key);
-      return d.getFullYear() === year && d.getMonth() === month;
-    });
-    return first || formatDateKey(year, month, 1);
-  })();
-
-  function changeMonth(diff) {
-    setCalDate(prev => {
-      const d = new Date(prev);
-      d.setMonth(d.getMonth() + diff);
-      return d;
-    });
-    setSelectedDateKey(null);
-  }
-
-  function selectDate(dateKey) {
-    setSelectedDateKey(dateKey);
-  }
-
-  // 이벤트 렌더링
-  const selectedEvents = calendarEvents[resolvedSelected] || [];
-  const [selYear, selMonth, selDay] = resolvedSelected.split('-');
-
-  // 달력 셀 생성
-  const cells = [];
-  for (let i = 0; i < startWeekday; i++) {
-    const dateNum = prevMonthDays - startWeekday + i + 1;
-    cells.push(
-      <div key={`prev-${i}`} className="cal-cell other-month">
-        <div className="cal-date">{dateNum}</div>
-        <div className="cal-dots" />
-      </div>
-    );
-  }
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateKey = formatDateKey(year, month, day);
-    const events = calendarEvents[dateKey] || [];
-    const cellDate = new Date(year, month, day);
-    const isToday = today.getFullYear() === cellDate.getFullYear()
-      && today.getMonth() === cellDate.getMonth()
-      && today.getDate() === cellDate.getDate();
-    const isSelected = resolvedSelected === dateKey;
-    let cls = 'cal-cell';
-    if (isToday) cls += ' today';
-    if (isSelected) cls += ' selected';
-    cells.push(
-      <div key={`day-${day}`} className={cls} onClick={() => selectDate(dateKey)}>
-        <div className="cal-date">{day}</div>
-        <div className="cal-dots">
-          {events.map((evt, i) => (
-            <div key={i} className="cal-dot" style={{ background: evt.color }} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-  const totalCells = startWeekday + daysInMonth;
-  const nextDays = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-  for (let i = 1; i <= nextDays; i++) {
-    cells.push(
-      <div key={`next-${i}`} className="cal-cell other-month">
-        <div className="cal-date">{i}</div>
-        <div className="cal-dots" />
-      </div>
-    );
-  }
-
-  return (
-    <div className={getScreenClass('s-calendar')} id="s-calendar">
-      <div className="topbar">
-        <div className="tb-title" style={{ flex: 1 }}>캘린더</div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => changeMonth(-1)} style={{ width: '30px', height: '30px', borderRadius: '9px', border: '1.5px solid var(--c-border)', background: 'var(--c-surface)', cursor: 'pointer', fontSize: '14px' }}>‹</button>
-          <button onClick={() => changeMonth(1)} style={{ width: '30px', height: '30px', borderRadius: '9px', border: '1.5px solid var(--c-border)', background: 'var(--c-surface)', cursor: 'pointer', fontSize: '14px' }}>›</button>
-        </div>
-      </div>
-      <div id="calendar-month-label" style={{ padding: '2px 14px 6px', fontSize: '13px', fontWeight: 500, color: 'var(--c-t2)' }}>
-        {year}년 {month + 1}월
-      </div>
-      <div className="scroll-area">
-        <div style={{ padding: '0 14px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', marginBottom: '4px' }}>
-            {['일','월','화','수','목','금','토'].map(d => (
-              <div key={d} style={{ textAlign: 'center', fontSize: '11px', color: 'var(--c-t3)', fontWeight: 500, padding: '3px 0' }}>{d}</div>
-            ))}
-          </div>
-          <div id="cal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: '6px' }}>
-            {cells}
-          </div>
-        </div>
-
-        <div id="selected-date-title" style={{ padding: '14px 14px 6px', fontSize: '12px', fontWeight: 600, color: 'var(--c-t3)', letterSpacing: '.5px' }}>
-          {selYear}년 {Number(selMonth)}월 {Number(selDay)}일 일정
-        </div>
-
-        <div id="selected-events" style={{ padding: '0 14px 20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {selectedEvents.length === 0 ? (
-            <div style={{ padding: '14px', border: '1.5px dashed var(--c-border)', borderRadius: '13px', fontSize: '13px', color: 'var(--c-t2)', background: '#FAFAF8' }}>
-              이 날짜에는 등록된 일정이 없어요.
-            </div>
-          ) : (
-            selectedEvents.map((event, i) => (
-              <div key={i} style={{ display: 'flex', gap: '10px', padding: '12px 13px', border: '1.5px solid var(--c-border)', borderRadius: '13px', background: 'var(--c-surface)' }}>
-                <div style={{ width: '4px', borderRadius: '2px', background: event.color, flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--c-t1)' }}>{event.title}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--c-t2)', marginTop: '4px' }}>{event.desc}</div>
-                  <div style={{ display: 'inline-block', marginTop: '6px', fontSize: '10px', fontWeight: 500, padding: '2px 8px', borderRadius: '8px', background: '#F5F4F0', color: 'var(--c-t2)' }}>
-                    {event.type}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-      <BottomNav active="s-calendar" navigate={navigate} />
-    </div>
-  );
-};
+import CalendarScreen from "./components/screens/CalendarScreen";
 
 /* ══════════════════════════════
    메인 앱 컴포넌트
 ══════════════════════════════ */
-export default function UniGuideApp() {
+export default function YHSApp() {
   const [current, setCurrent] = useState('s-home');
   const [prev, setPrev] = useState(null);
   const [historyStack, setHistoryStack] = useState(['s-home']);
@@ -1805,200 +1619,29 @@ export default function UniGuideApp() {
       {/* ══════ SCREENS ══════ */}
       <div className="screens">
 
-        {/* ① HOME */}
-        <div className={getScreenClass('s-home')} id="s-home">
-          <div className="topbar">
-            <div className="notif-btn" onClick={() => navigate('notif-placeholder')}>
-              <div style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--c-bg)', border: '1.5px solid var(--c-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>🔔</div>
-              <div className="notif-bubble">2</div>
-            </div>
-            <div style={{ flex: 1, marginLeft: '8px' }}>
-              <div className="tb-title">UniGuide</div>
-              <div className="tb-sub">안녕하세요, Wei!</div>
-            </div>
-            <div onClick={() => navigate('s-profile')} style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--c-accent-l)', border: '2px solid var(--c-accent-m)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700, color: 'var(--c-accent)', cursor: 'pointer' }}>W</div>
-          </div>
-          <div className="info-chip urgent">
-            🛂 D-2 비자 만료까지 <strong>87일</strong> 남았습니다
-          </div>
-          <div className="scroll-area">
-            <div className="sec-lbl">내 채널</div>
-            <div className="ch-item" onClick={() => navigate('s-visa')}>
-              <div className="ch-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-              <div className="ch-body">
-                <div className="ch-name">비자 & 체류</div>
-                <div className="ch-preview">비자 연장하려면 뭐가 필요해요?</div>
-              </div>
-              <div className="ch-meta">
-                <div className="ch-time">방금</div>
-                <div className="badge" style={{ background: 'var(--c-red-l)', color: 'var(--c-red)' }}>D-87</div>
-              </div>
-            </div>
-            <div className="ch-item" onClick={() => navigate('s-main')}>
-              <div className="ch-icon" style={{ background: 'var(--c-green-l)' }}>🏫</div>
-              <div className="ch-body">
-                <div className="ch-name">학교생활</div>
-                <div className="ch-preview">수강신청은 어떻게 하나요?</div>
-              </div>
-              <div className="ch-meta"><div className="ch-time">어제</div></div>
-            </div>
-            <div className="ch-item" onClick={() => navigate('s-main')}>
-              <div className="ch-icon" style={{ background: 'var(--c-amber-l)' }}>💼</div>
-              <div className="ch-body">
-                <div className="ch-name">취업 & 아르바이트</div>
-                <div className="ch-preview">시간제 취업 허가 절차 안내 완료</div>
-              </div>
-              <div className="ch-meta">
-                <div className="ch-time">3일 전</div>
-                <div className="badge" style={{ background: 'var(--c-accent-l)', color: 'var(--c-accent)' }}>새 답변</div>
-              </div>
-            </div>
-            <div className="ch-item" onClick={() => navigate('s-main')}>
-              <div className="ch-icon" style={{ background: 'var(--c-accent-l)' }}>🏠</div>
-              <div className="ch-body">
-                <div className="ch-name">주거</div>
-                <div className="ch-preview">계약 만료 60일 전 알림 설정됨</div>
-              </div>
-              <div className="ch-meta"><div className="ch-time">1주 전</div></div>
-            </div>
-            <div className="ch-item" onClick={() => navigate('s-main')}>
-              <div className="ch-icon" style={{ background: '#FEE2E2' }}>🏥</div>
-              <div className="ch-body">
-                <div className="ch-name">병원 & 보험</div>
-                <div className="ch-preview">건강보험 가입 완료</div>
-              </div>
-              <div className="ch-meta"><div className="ch-time">2주 전</div></div>
-            </div>
-            <div className="sec-lbl">채널 추가</div>
-            <div className="ch-item" onClick={() => showToast('채널 생성 화면으로 이동합니다')}>
-              <div className="ch-icon" style={{ background: 'var(--c-bg)', border: '1.5px dashed var(--c-border-s)', fontSize: '22px' }}>+</div>
-              <div className="ch-body">
-                <div className="ch-name" style={{ color: 'var(--c-t2)' }}>새 채널 만들기</div>
-                <div className="ch-preview">생활정보, 커뮤니티 등</div>
-              </div>
-            </div>
-            <div style={{ height: '20px' }} />
-          </div>
-          <BottomNav active="s-home" navigate={navigate} />
-        </div>
+        <HomeScreen navigate={navigate} getScreenClass={getScreenClass} showToast={showToast} />
 
-        {/* ② VISA CHANNEL */}
-        <div className={getScreenClass('s-visa')} id="s-visa">
-          <div className="slim-header">
-            <div className="tb-back" onClick={back}>
-              <BackIcon />
-            </div>
-            <div className="slim-ch-icon" style={{ background: 'var(--c-purple-l)' }}>🛂</div>
-            <div className="slim-ch-name">비자 & 체류</div>
-            <div className="slim-rag">RAG 활성</div>
-            <div className="slim-d87" onClick={() => setInfoOpen(o => !o)}>
-              <span id="d87-txt">D-87</span>
-              <span id="d87-arrow" style={{ fontSize: '10px' }}>{infoOpen ? '▾' : '▸'}</span>
-            </div>
-          </div>
-          {infoOpen && (
-            <div className="info-panel" id="info-panel">
-              <div className="i-chip">🗓 D-2 만료 <strong>2026. 8. 15</strong></div>
-              <div className="i-chip green">🔔 알림 설정됨</div>
-            </div>
-          )}
-          <div className="qa-scroll">
-            <button className="qa-btn" onClick={() => navigate('s-step')}>📋 비자 연장 절차</button>
-            <button className="qa-btn" onClick={() => showToast('외국인등록증 재발급 안내를 불러옵니다')}>🪪 외국인등록증</button>
-            <button className="qa-btn" onClick={() => showToast('체류확인서 발급 안내를 불러옵니다')}>📄 체류확인서</button>
-            <button className="qa-btn" onClick={() => showToast('비자 변경 절차 안내를 불러옵니다')}>🔄 비자 변경</button>
-          </div>
-          <div className="scroll-area">
-            <div className="chat-area" id="visa-chat-area">
-              <div className="msg-ai">
-                <div className="ai-av">AI</div>
-                <div className="bubble-ai">D-2 채널입니다. 만료까지 <strong>87일</strong> 남았어요. 위 버튼을 탭하거나 직접 질문해주세요!</div>
-              </div>
-            </div>
-            <div style={{ height: '8px' }} />
-          </div>
-          <div className="chat-input-bar">
-            <input className="c-input" id="visa-input" placeholder="비자 관련 질문하기..." />
-            <button className="send-btn" onClick={() => showToast('메시지를 전송합니다')}>
-              <SendIcon />
-            </button>
-          </div>
-        </div>
+        <VisaScreen
+          navigate={navigate}
+          back={back}
+          getScreenClass={getScreenClass}
+          showToast={showToast}
+          infoOpen={infoOpen}
+          setInfoOpen={setInfoOpen}
+        />
 
-        {/* ③ STEP GUIDE */}
-        <div className={getScreenClass('s-step')} id="s-step">
-          <div className="topbar">
-            <div className="tb-back" onClick={back}>
-              <BackIcon />
-              비자 채널
-            </div>
-          </div>
-          <div style={{ padding: '12px 16px 4px' }}>
-            <div className="tb-title" style={{ fontSize: '17px' }}>D-2 비자 연장 절차</div>
-            <div className="tb-sub">출입국관리사무소 방문 기준</div>
-          </div>
-          <div className="progress-wrap">
-            <div className="progress-bg">
-              <div className="progress-fill" id="prog-fill" style={{ width: `${pct}%` }} />
-            </div>
-            <div className="prog-label">
-              <span id="prog-txt">{checkedCount} / {total} 단계 완료</span>
-              <span id="prog-pct" style={{ color: 'var(--c-green)' }}>{pct}%</span>
-            </div>
-          </div>
-          <div className="scroll-area" style={{ paddingBottom: '12px' }}>
-            <div className="step-card">
-              <div className="step-card-hdr">
-                <span>📁 서류 준비</span>
-                <span id="grp1-prog" style={{ fontSize: '11px', fontWeight: 400 }}>{grp1Checked}/4 완료</span>
-              </div>
-              {steps.slice(0, 4).map(step => (
-                <div key={step.id} className="step-row" onClick={() => toggleStep(step.id)}>
-                  <div className={`step-cb${step.checked ? ' checked' : step.current ? ' current' : ''}`}>
-                    {step.checked ? '✓' : ''}
-                  </div>
-                  <div className="step-label">
-                    <div className={`step-text${step.checked ? ' done' : ''}`} style={!step.checked && !step.current ? { color: 'var(--c-t3)' } : {}}>
-                      {step.text}
-                    </div>
-                    {step.sub && (
-                      <div className={`step-sub${step.checked ? ' done' : ''}`} style={!step.checked && !step.current ? { color: 'var(--c-t3)' } : {}}>
-                        {step.sub}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="step-card">
-              <div className="step-card-hdr">
-                <span>📋 신청</span>
-                <span style={{ fontSize: '11px', fontWeight: 400 }}>{grp2Checked}/2 완료</span>
-              </div>
-              {steps.slice(4).map(step => (
-                <div key={step.id} className="step-row" onClick={() => toggleStep(step.id)}>
-                  <div className={`step-cb${step.checked ? ' checked' : ''}`}>
-                    {step.checked ? '✓' : ''}
-                  </div>
-                  <div className="step-label">
-                    <div className={`step-text${step.checked ? ' done' : ''}`} style={{ color: step.checked ? undefined : 'var(--c-t3)' }}>
-                      {step.text}
-                    </div>
-                    {step.sub && (
-                      <div className={`step-sub${step.checked ? ' done' : ''}`} style={{ color: step.checked ? undefined : 'var(--c-t3)' }}>
-                        {step.sub}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="save-note">✅ 체크 상태는 자동 저장됩니다. 앱을 닫아도 유지돼요.</div>
-            <div style={{ margin: '4px 14px' }}>
-              <button className="qa-btn" style={{ width: '100%', textAlign: 'left', borderRadius: '11px', padding: '12px 14px' }} onClick={() => showToast('주의사항을 불러옵니다')}>⚠️ 주의사항 더 보기</button>
-            </div>
-          </div>
-        </div>
+        <StepGuideScreen
+          back={back}
+          getScreenClass={getScreenClass}
+          toggleStep={toggleStep}
+          steps={steps}
+          checkedCount={checkedCount}
+          total={total}
+          pct={pct}
+          grp1Checked={grp1Checked}
+          grp2Checked={grp2Checked}
+          showToast={showToast}
+        />
 
         {/* ④ MAIN CHAT */}
         <div className={getScreenClass('s-main')} id="s-main">
@@ -2203,7 +1846,7 @@ export default function UniGuideApp() {
           <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <div className="ob-hero">
               <span className="ob-mark">🎓</span>
-              <div className="ob-h">UniGuide AI</div>
+              <div className="ob-h">YHS AI</div>
               <div className="ob-p">한국 유학 생활, 더 쉽게<br />비자·학교·생활 모두 안내해드려요</div>
             </div>
             <button className="social-btn" onClick={() => showToast('Google 로그인 화면으로 이동합니다')}>

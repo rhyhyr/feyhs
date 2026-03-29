@@ -55,16 +55,15 @@ body {
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: left;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  min-height: 100vh; /* 화면 전체 높이 확보 */
+  display: flex;     /* Flexbox 레이아웃 적용 */
+  justify-content: center; /* 가로 방향 중앙 정렬 */
+  align-items: center;     /* 세로 방향 중앙 정렬 */
+  background-color: #1a1a1a; /* 배경을 어둡게 하면 아이폰이 더 돋보입니다 */
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  justify-content: center;
 }
 
 h1,
